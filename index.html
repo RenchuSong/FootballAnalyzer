@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+
+<style>
+body {
+  font: 11px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://rawgithub.com/tmcw/simple-statistics/master/src/simple_statistics.js"></script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 400 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+/* 
+ * value accessor - returns the value to encode for a given data object.
+ * scale - maps value to a visual display encoding, such as a pixel position.
+ * map function - maps from data value to display value
+ * axis - sets up axis
+ */ 
+
+// // setup x 
+// var xValue = function(d) { return d.avgpercentile;}, // data -> value
+//     xScale = d3.scale.linear().range([0, width]), // value -> display
+//     xMap = function(d) { return xScale(xValue(d));}, // data -> display
+//     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// // setup y
+// var yValue = function(d) { return d['R/G'];}, // data -> value
+//     yScale = d3.scale.linear().range([height, 0]), // value -> display
+//     yMap = function(d) { return yScale(yValue(d));}, // data -> display
+//     yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// // setup fill color
+// var cValue = function(d) { return d.Manufacturer;},
+//     color = d3.scale.category10();
+
+// // add the graph canvas to the body of the webpage
+// // var svg = d3.select("body").append("svg")
+// //     .attr("width", width + margin.left + margin.right)
+// //     .attr("height", height + margin.top + margin.bottom)
+// //   .append("g")
+// //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// // add the tooltip area to the webpage
+// var tooltip = d3.select("body").append("div")
+//     .attr("class", "tooltip")
+//     .style("opacity", 0);
+
+// // load data
+// d3.json("test.json", function(error, data) {
+//   console.log(data);
+
+//   // don't want dots overlapping axis, so add in buffer to data domain
+//   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+//   yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+//   // x-axis
+//   svg.append("g")
+//       .attr("class", "x axis")
+//       .attr("transform", "translate(0," + height + ")")
+//       .call(xAxis)
+//     .append("text")
+//       .attr("class", "label")
+//       .attr("x", width)
+//       .attr("y", -6)
+//       .style("text-anchor", "end")
+//       .text("Calories");
+
+//   // y-axis
+//   svg.append("g")
+//       .attr("class", "y axis")
+//       .call(yAxis)
+//     .append("text")
+//       .attr("class", "label")
+//       .attr("transform", "rotate(-90)")
+//       .attr("y", 6)
+//       .attr("dy", ".71em")
+//       .style("text-anchor", "end")
+//       .text("Protein (g)");
+
+//   // draw dots
+//   svg.selectAll(".dot")
+//       .data(data.filter(function(d) { return d['R/G'] != 0}))
+//     .enter().append("circle")
+//       .attr("class", "dot")
+//       .attr("r", 3.5)
+//       .attr("cx", xMap)
+//       .attr("cy", yMap)
+//       .style("fill", function(d) { return color(cValue(d));}) 
+//       .on("mouseover", function(d) {
+//           tooltip.transition()
+//                .duration(200)
+//                .style("opacity", .9);
+//           tooltip.html(d.name + "<br/> (" + xValue(d) 
+// 	        + ", " + yValue(d) + ")")
+//                .style("left", (d3.event.pageX + 5) + "px")
+//                .style("top", (d3.event.pageY - 28) + "px");
+//       })
+//       .on("mouseout", function(d) {
+//           tooltip.transition()
+//                .duration(500)
+//                .style("opacity", 0);
+//       });
+// });
+
+
+// // load data
+// var svg2 = d3.select("body").append("svg")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom)
+//   .append("g")
+//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// d3.json("test2.json", function(error, data) {
+//   console.log(data);
+
+//   data = data.filter(function(d) { return d['R/G'] != 0})
+
+//   // don't want dots overlapping axis, so add in buffer to data domain
+//   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+//   yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+//   // x-axis
+//   svg2.append("g")
+//       .attr("class", "x axis")
+//       .attr("transform", "translate(0," + height + ")")
+//       .call(xAxis)
+//     .append("text")
+//       .attr("class", "label")
+//       .attr("x", width)
+//       .attr("y", -6)
+//       .style("text-anchor", "end")
+//       .text("Calories");
+
+//   // y-axis
+//   svg2.append("g")
+//       .attr("class", "y axis")
+//       .call(yAxis)
+//     .append("text")
+//       .attr("class", "label")
+//       .attr("transform", "rotate(-90)")
+//       .attr("y", 6)
+//       .attr("dy", ".71em")
+//       .style("text-anchor", "end")
+//       .text("Protein (g)");
+
+//   // draw dots
+//   svg2.selectAll(".dot")
+//       .data(data)
+//     .enter().append("circle")
+//       .attr("class", "dot")
+//       .attr("r", 3.5)
+//       .attr("cx", xMap)
+//       .attr("cy", yMap)
+//       .style("fill", function(d) { return color(cValue(d));}) 
+//       .on("mouseover", function(d) {
+//           tooltip.transition()
+//                .duration(200)
+//                .style("opacity", .9);
+//           tooltip.html(d.name + "<br/> (" + xValue(d) 
+//           + ", " + yValue(d) + ")")
+//                .style("left", (d3.event.pageX + 5) + "px")
+//                .style("top", (d3.event.pageY - 28) + "px");
+//       })
+//       .on("mouseout", function(d) {
+//           tooltip.transition()
+//                .duration(500)
+//                .style("opacity", 0);
+//       });
+
+//   var lin = ss.linear_regression().data(data.map(function(d) {
+//     return [d.avgpercentile, d['R/G']];
+//   })).line();
+
+
+// });
+
+var metrics = ['Fmb', 'G', 'GS', 'Lng', 'R/G', 'Rec', 'TD', 'Tgt', 'Y/G', 'Y/R', 'Yds', 'picktotal', 'combinemetric'];
+
+var combine = ['fortyyd', 'twentyss', 'vertical', 'bench', 'weight', 'arms', 'hands', 'tenyd', 'threecone', 'broad', 'height'];
+
+// load data
+d3.json("test2.json", function(error, data) {
+  for (var wp = 0; wp < combine.length; wp++) {
+      var tooltip = d3.select("body").append("h2")
+            .text(combine[wp]);
+
+      for (var lp = 0; lp < metrics.length; lp++) {
+
+        var com = combine[wp];
+        var metric = metrics[lp];
+
+
+        // setup x 
+        var xValue = function(d) { return d[com];}, // data -> value
+            xScale = d3.scale.linear().range([0, width]), // value -> display
+            xMap = function(d) { return xScale(xValue(d));}, // data -> display
+            xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+        // setup y
+        var yValue = function(d) { return d[metric];}, // data -> value
+            yScale = d3.scale.linear().range([height, 0]), // value -> display
+            yMap = function(d) { return yScale(yValue(d));}, // data -> display
+            yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+        // setup fill color
+        var cValue = function(d) { return d.Manufacturer;},
+            color = d3.scale.category10();
+
+        // add the graph canvas to the body of the webpage
+        // var svg = d3.select("body").append("svg")
+        //     .attr("width", width + margin.left + margin.right)
+        //     .attr("height", height + margin.top + margin.bottom)
+        //   .append("g")
+        //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // add the tooltip area to the webpage
+        var tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+
+        var svg2 = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        var thedata = data.filter(function(d) { return d[metric] != 0 && d[com] != 0})
+          .sort(function(a, b){ return d3.ascending(a[com], b[com]); })
+
+        // don't want dots overlapping axis, so add in buffer to data domain
+        xScale.domain([d3.min(thedata, xValue), d3.max(thedata, xValue)]);
+        yScale.domain([d3.min(thedata, yValue), d3.max(thedata, yValue)]);
+
+
+        // x-axis
+        svg2.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+          .append("text")
+            .attr("class", "label")
+            .attr("x", width)
+            .attr("y", -6)
+            .style("text-anchor", "end")
+            .text(com);
+
+        // y-axis
+        svg2.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text(metric);
+
+        // draw dots
+        svg2.selectAll(".dot")
+            .data(thedata)
+          .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 3.5)
+            .attr("cx", xMap)
+            .attr("cy", yMap)
+            .style("fill", function(d) { return color(cValue(d));}) 
+            .on("mouseover", function(d) {
+                tooltip.transition()
+                     .duration(200)
+                     .style("opacity", .9);
+                tooltip.html(d.name + "<br/> (" + xValue(d) 
+                + ", " + yValue(d) + ")")
+                     .style("left", (d3.event.pageX + 5) + "px")
+                     .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                tooltip.transition()
+                     .duration(500)
+                     .style("opacity", 0);
+            });
+
+        var lin = ss.linear_regression().data(thedata.map(function(d) {
+          return [d[com], d[metric]];
+        })).line();
+
+        var lindata = xScale.domain().map(function(d) {
+          return {
+            x: d,
+            y: lin(d)
+          };
+        });
+
+        var line = d3.svg.line()
+          .x(function(d) { return xScale(d.x); })
+          .y(function(d) { return yScale(d.y); });
+
+        svg2.append("path")
+          .datum(lindata)
+          .attr("d", line)
+          .style("stroke", "black");
+      }
+    }
+});
+
+</script>
+</body>
+</html>
