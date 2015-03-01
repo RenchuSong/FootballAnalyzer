@@ -11,6 +11,8 @@ def norm_name(name):
 	return name[0:i+1]
 
 def percentile(d, min, max):
+	if ((min <= d <= max) == False and (max <= d <= min) == False):
+		return 0
 	return float(d - min) / (max - min)
 
 with open('combine.csv', 'rb') as csvfile:
@@ -120,9 +122,9 @@ for person in data:
 		) / 3.0
 		person['combinemetric'] = (
 			percentile(person['Y/G'], min_yg, max_yg) +
-			percentile(person['R/G'], min_rg, max_rg)
-			# percentile(person['G'], min_g, max_g)
-		) / 2.0
+			percentile(person['R/G'], min_rg, max_rg) + 
+			percentile(person['G'], min_g, max_g)
+		) / 3.0
 		filtered_data.append(person)
 
 # print max_fortyyd, min_fortyyd
