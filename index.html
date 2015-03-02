@@ -13,323 +13,246 @@ body {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: #ffffff;
   shape-rendering: crispEdges;
 }
 
 .dot {
   stroke: #000;
 }
-
-.tooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
-}
 </style>
+
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="https://rawgithub.com/tmcw/simple-statistics/master/src/simple_statistics.js"></script>
 
+<div id="LargeGraph" style="width:900px; height:525px; display:block; margin: auto"></div>
+<div id="SubGraphs" style="width:1200px; display:block; margin: auto"></div>
+
 <script>
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 400 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
-
-/* 
- * value accessor - returns the value to encode for a given data object.
- * scale - maps value to a visual display encoding, such as a pixel position.
- * map function - maps from data value to display value
- * axis - sets up axis
- */ 
-
-// // setup x 
-// var xValue = function(d) { return d.avgpercentile;}, // data -> value
-//     xScale = d3.scale.linear().range([0, width]), // value -> display
-//     xMap = function(d) { return xScale(xValue(d));}, // data -> display
-//     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-// // setup y
-// var yValue = function(d) { return d['R/G'];}, // data -> value
-//     yScale = d3.scale.linear().range([height, 0]), // value -> display
-//     yMap = function(d) { return yScale(yValue(d));}, // data -> display
-//     yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-// // setup fill color
-// var cValue = function(d) { return d.Manufacturer;},
-//     color = d3.scale.category10();
-
-// // add the graph canvas to the body of the webpage
-// // var svg = d3.select("body").append("svg")
-// //     .attr("width", width + margin.left + margin.right)
-// //     .attr("height", height + margin.top + margin.bottom)
-// //   .append("g")
-// //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// // add the tooltip area to the webpage
-// var tooltip = d3.select("body").append("div")
-//     .attr("class", "tooltip")
-//     .style("opacity", 0);
-
-// // load data
-// d3.json("test.json", function(error, data) {
-//   console.log(data);
-
-//   // don't want dots overlapping axis, so add in buffer to data domain
-//   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
-//   yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
-
-//   // x-axis
-//   svg.append("g")
-//       .attr("class", "x axis")
-//       .attr("transform", "translate(0," + height + ")")
-//       .call(xAxis)
-//     .append("text")
-//       .attr("class", "label")
-//       .attr("x", width)
-//       .attr("y", -6)
-//       .style("text-anchor", "end")
-//       .text("Calories");
-
-//   // y-axis
-//   svg.append("g")
-//       .attr("class", "y axis")
-//       .call(yAxis)
-//     .append("text")
-//       .attr("class", "label")
-//       .attr("transform", "rotate(-90)")
-//       .attr("y", 6)
-//       .attr("dy", ".71em")
-//       .style("text-anchor", "end")
-//       .text("Protein (g)");
-
-//   // draw dots
-//   svg.selectAll(".dot")
-//       .data(data.filter(function(d) { return d['R/G'] != 0}))
-//     .enter().append("circle")
-//       .attr("class", "dot")
-//       .attr("r", 3.5)
-//       .attr("cx", xMap)
-//       .attr("cy", yMap)
-//       .style("fill", function(d) { return color(cValue(d));}) 
-//       .on("mouseover", function(d) {
-//           tooltip.transition()
-//                .duration(200)
-//                .style("opacity", .9);
-//           tooltip.html(d.name + "<br/> (" + xValue(d) 
-// 	        + ", " + yValue(d) + ")")
-//                .style("left", (d3.event.pageX + 5) + "px")
-//                .style("top", (d3.event.pageY - 28) + "px");
-//       })
-//       .on("mouseout", function(d) {
-//           tooltip.transition()
-//                .duration(500)
-//                .style("opacity", 0);
-//       });
-// });
-
-
-// // load data
-// var svg2 = d3.select("body").append("svg")
-//     .attr("width", width + margin.left + margin.right)
-//     .attr("height", height + margin.top + margin.bottom)
-//   .append("g")
-//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// d3.json("test2.json", function(error, data) {
-//   console.log(data);
-
-//   data = data.filter(function(d) { return d['R/G'] != 0})
-
-//   // don't want dots overlapping axis, so add in buffer to data domain
-//   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
-//   yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
-
-//   // x-axis
-//   svg2.append("g")
-//       .attr("class", "x axis")
-//       .attr("transform", "translate(0," + height + ")")
-//       .call(xAxis)
-//     .append("text")
-//       .attr("class", "label")
-//       .attr("x", width)
-//       .attr("y", -6)
-//       .style("text-anchor", "end")
-//       .text("Calories");
-
-//   // y-axis
-//   svg2.append("g")
-//       .attr("class", "y axis")
-//       .call(yAxis)
-//     .append("text")
-//       .attr("class", "label")
-//       .attr("transform", "rotate(-90)")
-//       .attr("y", 6)
-//       .attr("dy", ".71em")
-//       .style("text-anchor", "end")
-//       .text("Protein (g)");
-
-//   // draw dots
-//   svg2.selectAll(".dot")
-//       .data(data)
-//     .enter().append("circle")
-//       .attr("class", "dot")
-//       .attr("r", 3.5)
-//       .attr("cx", xMap)
-//       .attr("cy", yMap)
-//       .style("fill", function(d) { return color(cValue(d));}) 
-//       .on("mouseover", function(d) {
-//           tooltip.transition()
-//                .duration(200)
-//                .style("opacity", .9);
-//           tooltip.html(d.name + "<br/> (" + xValue(d) 
-//           + ", " + yValue(d) + ")")
-//                .style("left", (d3.event.pageX + 5) + "px")
-//                .style("top", (d3.event.pageY - 28) + "px");
-//       })
-//       .on("mouseout", function(d) {
-//           tooltip.transition()
-//                .duration(500)
-//                .style("opacity", 0);
-//       });
-
-//   var lin = ss.linear_regression().data(data.map(function(d) {
-//     return [d.avgpercentile, d['R/G']];
-//   })).line();
-
-
-// });
-
-var metrics = ['Fmb', 'G', 'GS', 'Lng', 'R/G', 'Rec', 'TD', 'Tgt', 'Y/G', 'Y/R', 'Yds', 'picktotal', 'combinemetric'];
-
-var combine = ['fortyyd', 'twentyss', 'vertical', 'bench', 'weight', 'arms', 'hands', 'tenyd', 'threecone', 'broad', 'height'];
 
 // load data
-d3.json("test2.json", function(error, data) {
-  for (var wp = 0; wp < combine.length; wp++) {
-      var tooltip = d3.select("body").append("h2")
-            .text(combine[wp]);
+d3.json("test3.json", function(error, data) {
+  /////////////////////
+  //Create Large Graph
+  /////////////////////
 
-      for (var lp = 0; lp < metrics.length; lp++) {
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 750 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-        var com = combine[wp];
-        var metric = metrics[lp];
+  var com = 'avgpercentile';
+  var metric = 'combinemetric';
 
+  // setup x 
+  var xValue = function(d) { return d[com];}, // data -> value
+      xScale = d3.scale.linear().range([0, width]), // value -> display
+      xMap = function(d) { return xScale(xValue(d));}, // data -> display
+      xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-        // setup x 
-        var xValue = function(d) { return d[com];}, // data -> value
-            xScale = d3.scale.linear().range([0, width]), // value -> display
-            xMap = function(d) { return xScale(xValue(d));}, // data -> display
-            xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+  // setup y
+  var yValue = function(d) { return d[metric];}, // data -> value
+      yScale = d3.scale.linear().range([height, 0]), // value -> display
+      yMap = function(d) { return yScale(yValue(d));}, // data -> display
+      yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-        // setup y
-        var yValue = function(d) { return d[metric];}, // data -> value
-            yScale = d3.scale.linear().range([height, 0]), // value -> display
-            yMap = function(d) { return yScale(yValue(d));}, // data -> display
-            yAxis = d3.svg.axis().scale(yScale).orient("left");
+  // setup fill color
+  var cValue = function(d) { return d['picktotal'];},
+      color = d3.scale.linear().domain([300, 32, 1]).range(["#fef0d9", "#fc8d59","#b30000"]);
+      /* If just highlight first round picks
+        color = function(pick) {
+        if (pick <= 32){
+          return "#ff0000";
+        }
+        else {
+          return "#000000";
+        }
+      };*/
 
-        // setup fill color
-        var cValue = function(d) { return d.Manufacturer;},
-            color = d3.scale.category10();
-
-        // add the graph canvas to the body of the webpage
-        // var svg = d3.select("body").append("svg")
-        //     .attr("width", width + margin.left + margin.right)
-        //     .attr("height", height + margin.top + margin.bottom)
-        //   .append("g")
-        //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // add the tooltip area to the webpage
-        var tooltip = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
-
-
-        var svg2 = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-        var thedata = data.filter(function(d) { return d[metric] != 0 && d[com] != 0})
-          .sort(function(a, b){ return d3.ascending(a[com], b[com]); })
-
-        // don't want dots overlapping axis, so add in buffer to data domain
-        xScale.domain([d3.min(thedata, xValue), d3.max(thedata, xValue)]);
-        yScale.domain([d3.min(thedata, yValue), d3.max(thedata, yValue)]);
+  var svg = d3.select("#LargeGraph").append("svg")
+      .attr("width", 800)
+      .attr("height", 550)
+      //.attr("width", width + margin.left + margin.right)
+      //.attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-        // x-axis
-        svg2.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis)
-          .append("text")
-            .attr("class", "label")
-            .attr("x", width)
-            .attr("y", -6)
-            .style("text-anchor", "end")
-            .text(com);
+  var thedata = data.filter(function(d) { return d[metric] != 0 && d[com] != 0})
+    .sort(function(a, b){ return d3.ascending(a[com], b[com]); })
 
-        // y-axis
-        svg2.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-          .append("text")
-            .attr("class", "label")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text(metric);
+  xScale.domain([d3.min(thedata, xValue), d3.max(thedata, xValue)]);
+  yScale.domain([d3.min(thedata, yValue), d3.max(thedata, yValue)]);
 
-        // draw dots
-        svg2.selectAll(".dot")
-            .data(thedata)
-          .enter().append("circle")
-            .attr("class", "dot")
-            .attr("r", 3.5)
-            .attr("cx", xMap)
-            .attr("cy", yMap)
-            .style("fill", function(d) { return color(cValue(d));}) 
-            .on("mouseover", function(d) {
-                tooltip.transition()
-                     .duration(200)
-                     .style("opacity", .9);
-                tooltip.html(d.name + "<br/> (" + xValue(d) 
-                + ", " + yValue(d) + ")")
-                     .style("left", (d3.event.pageX + 5) + "px")
-                     .style("top", (d3.event.pageY - 28) + "px");
-            })
-            .on("mouseout", function(d) {
-                tooltip.transition()
-                     .duration(500)
-                     .style("opacity", 0);
-            });
+  svg.append("rect")
+      .attr("x", -35)
+      .attr("y", -10)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .attr("fill", "#666666")
+      .attr("stroke", "black")
+      .attr("stroke-width", 3);
 
-        var lin = ss.linear_regression().data(thedata.map(function(d) {
-          return [d[com], d[metric]];
-        })).line();
+  // x-axis
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Aggregate Combine Score");
 
-        var lindata = xScale.domain().map(function(d) {
-          return {
-            x: d,
-            y: lin(d)
-          };
-        });
+  // y-axis
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Aggregate NFL Performance");
 
-        var line = d3.svg.line()
-          .x(function(d) { return xScale(d.x); })
-          .y(function(d) { return yScale(d.y); });
+  // draw dots
+  svg.selectAll(".dot")
+      .data(thedata)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 3.5)
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      //.attr("opacity", .8)
+      .style("fill", function(d) { return color(cValue(d));});
 
-        svg2.append("path")
-          .datum(lindata)
-          .attr("d", line)
-          .style("stroke", "black");
-      }
-    }
+  var lin = ss.linear_regression().data(thedata.map(function(d) {
+    return [d[com], d[metric]];
+  })).line();
+
+  var lindata = xScale.domain().map(function(d) {
+    return {
+      x: d,
+      y: lin(d)
+    };
+  });
+
+  var line = d3.svg.line()
+    .x(function(d) { return xScale(d.x); })
+    .y(function(d) { return yScale(d.y); });
+
+  svg.append("path")
+    .datum(lindata)
+    .attr("d", line)
+    .style("stroke", "#08519c")
+    .style("stroke-width", 2);
+
+  /////////////////////
+  //Create Sub Graphs
+  /////////////////////
+
+  var combine = ['fortyyd', 'threecone', 'vertical', 'hands'];
+  var drillNames = {'fortyyd' : "40-yard Dash",
+                    'threecone' : "Three-cone Drill",
+                    'vertical' : "Vertical Jump",
+                    'hands' : "Hand Size"}
+
+  var smallMargin = {top: 20, right: 20, bottom: 30, left: 40},
+      smallWidth = 500 - smallMargin.left - smallMargin.right,
+      smallHeight = 350 - smallMargin.top - smallMargin.bottom;
+
+  // setup y
+  var yValue2 = function(d) { return d["combinemetric"];}, // data -> value
+      yScale2 = d3.scale.linear().range([smallHeight, 0]), // value -> display
+      yMap2 = function(d) { return yScale2(yValue2(d));}, // data -> display
+      yAxis2 = d3.svg.axis().scale(yScale2).orient("left");
+
+  combine.forEach(function (combineDrill){
+      // setup x 
+      var xValue2 = function(d) { return d[combineDrill];}, // data -> value
+      xScale2 = d3.scale.linear().range([0, smallWidth]), // value -> display
+      xMap2 = function(d) { return xScale2(xValue2(d));}, // data -> display
+      xAxis2 = d3.svg.axis().scale(xScale2).orient("bottom");
+
+      var svg = d3.select("#SubGraphs").append("svg")
+        .attr("width", smallWidth + smallMargin.left + smallMargin.right)
+        .attr("height", smallHeight + smallMargin.top + smallMargin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + smallMargin.left + "," + smallMargin.top + ")");
+
+      var thedata = data.filter(function(d) { return d[combineDrill] != 0 && d["combinemetric"] != 0})
+        .sort(function(a, b){ return d3.ascending(a[combineDrill], b[combineDrill]); })
+
+      xScale2.domain([d3.min(thedata, xValue2), d3.max(thedata, xValue2)]);
+      yScale2.domain([d3.min(thedata, yValue2), d3.max(thedata, yValue2)]);
+
+
+      svg.append("rect")
+        .attr("x", -35)
+        .attr("y", -10)
+        .attr("width", smallWidth + 50)
+        .attr("height", smallHeight + 35)
+        .attr("fill", "#666666")
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+
+      // x-axis
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + smallHeight + ")")
+          .call(xAxis2)
+        .append("text")
+          .attr("class", "label")
+          .attr("x", smallWidth)
+          .attr("y", -6)
+          .style("text-anchor", "end")
+          .text(drillNames[combineDrill]);
+
+      // y-axis
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis2)
+        .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("Aggregate NFL Performance");
+
+      // draw dots
+      svg.selectAll(".dot")
+          .data(thedata)
+        .enter().append("circle")
+          .attr("class", "dot")
+          .attr("r", 3.5)
+          .attr("cx", xMap2)
+          .attr("cy", yMap2)
+          .style("fill", function(d) { return color(cValue(d));});
+
+      var lin = ss.linear_regression().data(thedata.map(function(d) {
+        return [d[combineDrill], d["combinemetric"]];
+      })).line();
+
+      var lindata = xScale2.domain().map(function(d) {
+        return {
+          x: d,
+          y: lin(d)
+        };
+      });
+
+      var line = d3.svg.line()
+        .x(function(d) { return xScale2(d.x); })
+        .y(function(d) { return yScale2(d.y); });
+
+      svg.append("path")
+        .datum(lindata)
+        .attr("d", line)
+        .style("stroke", "#08519c")
+        .style("stroke-width", 2);
+  });
 });
 
 </script>

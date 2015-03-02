@@ -94,13 +94,14 @@ for person in combine:
 
 	data.append(person)
 
-max_fortyyd = min([float(p['fortyyd']) for p in data if p['fortyyd'] > 0 and p['twentyss'] > 0 and p['vertical'] > 0])
-min_fortyyd = max([float(p['fortyyd']) for p in data if p['fortyyd'] > 0 and p['twentyss'] > 0 and p['vertical'] > 0])
-max_twentyss = min([float(p['twentyss']) for p in data if p['fortyyd'] > 0 and p['twentyss'] > 0 and p['vertical'] > 0])
-min_twentyss = max([float(p['twentyss']) for p in data if p['fortyyd'] > 0 and p['twentyss'] > 0 and p['vertical'] > 0])
-max_vertical = min([float(p['vertical']) for p in data if p['fortyyd'] > 0 and p['twentyss'] > 0 and p['vertical'] > 0])
-min_vertical = max([float(p['vertical']) for p in data if p['fortyyd'] > 0 and p['twentyss'] > 0 and p['vertical'] > 0])
-
+max_fortyyd = min([float(p['fortyyd']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+min_fortyyd = max([float(p['fortyyd']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+max_threecone = min([float(p['threecone']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+min_threecone = max([float(p['threecone']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+max_vertical = max([float(p['vertical']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+min_vertical = min([float(p['vertical']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+max_hands = max([float(p['hands']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
+min_hands = min([float(p['hands']) for p in data if p['fortyyd'] > 0 and p['threecone'] > 0 and p['vertical'] > 0 and p['hands'] > 0])
 
 max_yg = max([float(p['Y/G']) for p in data if p['Y/G'] > 0 and p['R/G'] > 0 and p['G'] > 0])
 min_yg = min([float(p['Y/G']) for p in data if p['Y/G'] > 0 and p['R/G'] > 0 and p['G'] > 0])
@@ -117,9 +118,10 @@ for person in data:
 	if person['name'] != 'Steve Smith':
 		person['avgpercentile'] = (
 			percentile(person['fortyyd'], min_fortyyd, max_fortyyd) +
-			percentile(person['twentyss'], min_twentyss, max_twentyss) +
-			percentile(person['vertical'], min_vertical, max_vertical)
-		) / 3.0
+			percentile(person['threecone'], min_threecone, max_threecone) +
+			percentile(person['vertical'], min_vertical, max_vertical) +
+			percentile(person['hands'], min_hands, max_hands)
+		) / 4.0
 		person['combinemetric'] = (
 			percentile(person['Y/G'], min_yg, max_yg) +
 			percentile(person['R/G'], min_rg, max_rg) + 
